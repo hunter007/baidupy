@@ -1,0 +1,29 @@
+language: python
+
+# Use container-based infrastructure
+sudo: false
+
+matrix:
+  include:
+    - env: TOX_ENV=py27
+    - env: TOX_ENV=py33
+    - env: TOX_ENV=py34
+    - env: TOX_ENV=py35
+    - env: TOX_ENV=pypy
+    - env: TOX_ENV=pypy3
+
+
+cache:
+  directories:
+    - $HOME/.cache/pip
+
+install:
+  - pip install tox
+  - pip install coverage
+
+script: tox -e $TOX_ENV
+
+after_success:
+  - pip install scrutinizer-ocular codecov
+  - ocular
+  - codecov
