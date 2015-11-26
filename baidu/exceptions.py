@@ -9,3 +9,11 @@ class BaiduException(Exception):
 
     def __unicode__(self):
         return '<BaiduException {0}>'.format(self.errcode)
+
+
+class GeotableDoesNotExistException(BaiduException):
+    def __init__(self):
+        super(BaiduException, self).__init__(1004, 'geotable不存在')
+
+    def __unicode__(self):
+        return '<GeotableDoesNotExistException {0}>'.format(self.errcode)

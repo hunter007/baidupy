@@ -36,6 +36,13 @@ class GeoTable(object):
         else:
             object.__setattr__(self, attr_name, value)
 
+    def __unicode__(self):
+        class_name = str(self.__class__).strip('<>')
+        return "<{0} {1}>".format(class_name, self.name)
+
+    def __str__(self):
+        return self.__unicode__().encode('utf-8')
+
 
 class Column(object):
     """
@@ -76,3 +83,10 @@ class Column(object):
     @property
     def data(self):
         return self.__check()
+
+    def __unicode__(self):
+        class_name = str(self.__class__).strip('<>')
+        return "<{0} {1}>".format(class_name, self.data['name'])
+
+    def __str__(self):
+        return self.__unicode__().encode('utf-8')

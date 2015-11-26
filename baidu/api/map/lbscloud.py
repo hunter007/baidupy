@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 from __future__ import unicode_literals
+from baidu import exceptions
 from baidu.models import empty
 from baidu.models.lbscloud import Column, GeoTable
 from baidu.api.base import BaseAPI
@@ -26,7 +27,8 @@ class GeoDataAPI(BaseAPI):
             'geotype': geotype,
             'is_published': is_published
         }
-        return self.post('/geotable/create', data=data)
+        result = self.post('/geotable/create', data=data)
+        return result['id'] > 0
 
     def get_geotables(self, name=empty):
         """
@@ -39,14 +41,25 @@ class GeoDataAPI(BaseAPI):
         else:
             params = {'name': name}
         result = self.get('/geotable/list', params=params)
+        geotables = []
         if result['size'] > 0:
-            geotables = []
             for geotable_info in result['geotables']:
                 geotables.append(GeoTable(**geotable_info))
 
-            result['geotables'] = geotables
+        return geotables
 
-        return result
+    def get_geotable_by_name(self, geotable_name):
+        """
+        通过位置数据表的表名获取表对象
+
+        .. tips:
+            此方法不是百度 LSB API支持的，而是从`get_geotables`变形而来。
+        """
+        geotables = self.get_geotables(name=geotable_name)
+        if len(geotables) == 0:
+            raise exceptions.GeotableDoesNotExistException()
+        assert len(geotables) == 1, "位置数据表的名称不唯一"
+        return geotables[0]
 
     def get_geotable(self, geotable_id):
         """
@@ -96,7 +109,8 @@ class GeoDataAPI(BaseAPI):
         data.update(column.data)
         if 'id' in data:
             data.pop('id')
-        return self.post('/column/create', data=data)
+        result = self.post('/column/create', data=data)
+        return result['id'] > 0
 
     def get_columns(self, geotable_id, name=None, key=None):
         """
@@ -112,12 +126,11 @@ class GeoDataAPI(BaseAPI):
         if key is not empty and key:
             params['key'] = key
         result = self.get('/column/list', params=params)
+        column_list = []
         if result['size'] > 0:
-            column_list = []
             for column_info in result['columns']:
                 column_list.append(Column(**column_info))
-            result['columns'] = column_list
-        return result
+        return column_list
 
     def get_column(self, geotable_id, column_id):
         """
@@ -206,7 +219,8 @@ class GeoDataAPI(BaseAPI):
             'coord_type': coord_type,
         }
         data.update(kwargs)
-        return self.post('/poi/create', data=data)
+        result = self.post('/poi/create', data=data)
+        return result['id']
 
     def get_pois(self, geotable_id, page_index=0, page_size=10, **kwargs):
         """
@@ -250,7 +264,8 @@ class GeoDataAPI(BaseAPI):
 
         data = {'geotable_id': geotable_id, 'id': poi_id}
         data.update(kwargs)
-        return self.post('/poi/update', data=data)
+        result = self.post('/poi/update', data=data)
+        return result['id'] == poi_id
 
     def delete_poi(
             self,
@@ -284,7 +299,8 @@ class GeoDataAPI(BaseAPI):
         # 如果是批量删除，则需要传这个参数，值为1；如果不是批量删除，则不用传这个参数
         if is_total_del == 1:
             data['is_total_del'] = 1
-        return self.post('/poi/delete', data=data)
+        result = self.post('/poi/delete', data=data)
+        return result['id'] == poi_id
 
     # def upload_poi(self,):
     #     """
