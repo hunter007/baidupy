@@ -172,8 +172,8 @@ class GeoDataAPI(BaseAPI):
     def create_poi(
             self,
             geotable_id,
-            latitude,
             longitude,
+            latitude,
             coord_type,
             **kwargs):
         """
@@ -182,8 +182,8 @@ class GeoDataAPI(BaseAPI):
         TODO: 用户在column定义的key/value对？
 
         :param geotable_id: 记录关联的geotable的标识
-        :param latitude: 用户上传的纬度
         :param longitude: 用户上传的经度
+        :param latitude: 用户上传的纬度
         :param coord_type: 用户上传的坐标的类型
         :param title: poi名称，可选
         :param address: 地址，可选
@@ -191,12 +191,12 @@ class GeoDataAPI(BaseAPI):
 
 
         """
-        optionals = ('title', 'address', 'tags')
+        optionals = ('title', 'address', 'tags', 'url')
 
         for key in kwargs:
             if key not in optionals:
                 kwargs.pop(key)
-            if kwargs['key'] is empty:
+            if kwargs[key] is empty:
                 kwargs.pop(key)
 
         data = {
@@ -224,9 +224,9 @@ class GeoDataAPI(BaseAPI):
 
         """
 
-        data = {'geotable_id': geotable_id}
-        data.update(kwargs)
-        self.get('/poi/list', data=data)
+        params = {'geotable_id': geotable_id}
+        params.update(kwargs)
+        return self.get('/poi/list', params=params)
 
     def get_poi(self, geotable_id, poi_id):
         """
@@ -282,8 +282,8 @@ class GeoDataAPI(BaseAPI):
             data.update(kwargs)
 
         # 如果是批量删除，则需要传这个参数，值为1；如果不是批量删除，则不用传这个参数
-        if is_total_del != 1:
-            data.pop(is_total_del)
+        if is_total_del == 1:
+            data['is_total_del'] = 1
         return self.post('/poi/delete', data=data)
 
     # def upload_poi(self,):

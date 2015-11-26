@@ -10,7 +10,7 @@
 """
 from __future__ import unicode_literals
 import inspect
-import urllib
+from six.moves.urllib.parse import quote, quote_plus
 import hashlib
 import requests
 
@@ -50,19 +50,24 @@ class BaseClient(object):
         """
         计算 sn
         """
-        encoded_str = urllib.quote(query_str, safe=self.safe_chars)
+        encoded_str = quote(query_str, safe=self.safe_chars)
         raw_str = encoded_str + self.__sk
-        return hashlib.md5(urllib.quote_plus(raw_str)).hexdigest()
+        return hashlib.md5(quote_plus(raw_str).encode('utf-8')).hexdigest()
 
     def _request(self, method, url, **kwargs):
-        if 'params' not in kwargs:
-            kwargs['params'] = {}
-
-        kwargs['params']['ak'] = self.__ak
+        if method == 'post':
+            if 'data' not in kwargs:
+                kwargs['data'] = {}
+            kwargs['data']['ak'] = self.__ak
+        elif method == 'get':
+            if 'params' not in kwargs:
+                kwargs['params'] = {}
+            kwargs['params']['ak'] = self.__ak
         if self.model == 'sn':
             arg_list = []
-            for arg, value in kwargs['params'].iteritems():
-                arg_list.append('{0}={1}'.format(arg, value))
+            if 'params' in kwargs:
+                for arg, value in kwargs['params'].items():
+                    arg_list.append('{0}={1}'.format(arg, value))
             query_str = '&'.join(arg_list)
             url = '{url}?{params}'.format(url=url, params=query_str)
             query_str1 = url[len(self.api_host):]
