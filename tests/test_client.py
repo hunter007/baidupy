@@ -47,15 +47,13 @@ class LBSClientTestCase(unittest.TestCase):
     def test_geodata_create_geotable(self):
         with HTTMock(baidu_api_mock):
             result = self.lbs_client.geodata.create_geotable('geotable', 1)
-            self.assertIn('id', result)
-            self.assertNotIn('status', result)
+            self.assertTrue(result)
 
     def test_geodata_get_geotables(self):
         with HTTMock(baidu_api_mock):
             geotables = self.lbs_client.geodata.get_geotables()
-            self.assertIn('geotables', geotables)
-            self.assertEqual(geotables['size'], len(geotables['geotables']))
-            self.assertIsInstance(geotables['geotables'][0], GeoTable)
+            self.assertIsInstance(geotables, list)
+            self.assertIsInstance(geotables[0], GeoTable)
 
     def test_geodata_get_geotable(self):
         with HTTMock(baidu_api_mock):
@@ -91,13 +89,13 @@ class LBSClientTestCase(unittest.TestCase):
                 **column_dict
             )
             result = self.lbs_client.geodata.create_column(23456, column)
-            self.assertIn('id', result)
+            self.assertTrue(result)
 
     def test_geodata_get_columns(self):
         with HTTMock(baidu_api_mock):
             result = self.lbs_client.geodata.get_columns(23456)
-            self.assertEqual(result['size'], 1)
-            self.assertIsInstance(result['columns'][0], Column)
+            self.assertEqual(len(result), 1)
+            self.assertIsInstance(result[0], Column)
 
     def test_geodata_get_column(self):
         with HTTMock(baidu_api_mock):
