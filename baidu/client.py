@@ -17,6 +17,7 @@ import requests
 from baidu.exceptions import BaiduException
 from baidu.api.base import BaseAPI
 from baidu.api.map.lbscloud import GeoDataAPI
+from baidu.api.map.geosearch import GeoSearchAPI
 
 
 def _is_api_endpoint(obj):
@@ -99,8 +100,10 @@ class BaseClient(object):
         if result.get('status', 0) != 0:
             raise BaiduException(result['status'], result['message'])
         else:
-            result.pop('status')
-            result.pop('message')
+            if 'status' in result:
+                result.pop('status')
+            if 'message' in result:
+                result.pop('message')
             if not result:
                 result = True
             return result
@@ -125,3 +128,4 @@ class LBSClient(BaseClient):
     version = 'v3'
 
     geodata = GeoDataAPI()
+    geosearch = GeoSearchAPI()
