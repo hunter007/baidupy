@@ -16,9 +16,11 @@ FIXTURE_PATH = os.path.join(TESTS_PATH, 'fixtures')
 def baidu_api_mock(url, request):
     dir = url.path.split('/')[1]
     file_name = '_'.join(url.path.split('/')[3:])
+    if '/location/ip' in url:
+        dir = 'location'
+        file_name = 'ip'
 
     res_file = os.path.join(FIXTURE_PATH, dir, '%s.json' % file_name)
-    print(res_file)
     content = {
         'errcode': 99999,
         'errmsg': 'can not find fixture %s' % res_file,
@@ -119,3 +121,12 @@ class LBSClientTestCase(unittest.TestCase):
             result = self.lbs_client.geosearch.search_detail(23456, 1504573502)
             self.assertIsInstance(result, dict)
             self.assertEqual(result['uid'], 1504573502)
+
+    def test_iplocation_get_location_info(self):
+        with HTTMock(baidu_api_mock):
+            result = self.lbs_client.iplocation.get_location_info(
+                coor='bd09ll'
+            )
+            self.assertIsInstance(result, dict)
+            self.assertIn('point', result['content'])
+            self.assertTrue(float(result['content']['point']['x']) <= 180)

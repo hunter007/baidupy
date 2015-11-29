@@ -18,7 +18,7 @@ class BaseAPI(object):
             api_host=self.__client.api_host,
             scope=self.scope,
             version=self.version
-        )
+        ).rstrip('/')
 
     def post(self, url, **kwargs):
         url = self.base_url + url
