@@ -113,3 +113,9 @@ class LBSClientTestCase(unittest.TestCase):
         with HTTMock(baidu_api_mock):
             result = self.lbs_client.geodata.update_column(23456, 345123)
             self.assertTrue(result)
+
+    def test_geosearch_search_detail(self):
+        with HTTMock(baidu_api_mock):
+            result = self.lbs_client.geosearch.search_detail(23456, 1504573502)
+            self.assertIsInstance(result, dict)
+            self.assertEqual(result['uid'], 1504573502)

@@ -14,7 +14,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='baidupy',
-    version='0.0.2',
+    version='0.0.4',
     author='hunter007',
     author_email='wentao79@gmail.com',
     url='https://github.com/hunter007/baidupy',
