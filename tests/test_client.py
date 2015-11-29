@@ -14,11 +14,15 @@ FIXTURE_PATH = os.path.join(TESTS_PATH, 'fixtures')
 
 @urlmatch(netloc=r'api\.map\.baidu\.com$')
 def baidu_api_mock(url, request):
-    dir = url.path.split('/')[1]
-    file_name = '_'.join(url.path.split('/')[3:])
-    if '/location/ip' in url:
+    if '/location/ip' in url.path:
         dir = 'location'
         file_name = 'ip'
+    elif '/geoconv' in url.path:
+        dir = 'geoconv'
+        file_name = 'coords'
+    else:
+        dir = url.path.split('/')[1]
+        file_name = '_'.join(url.path.split('/')[3:])
 
     res_file = os.path.join(FIXTURE_PATH, dir, '%s.json' % file_name)
     content = {
@@ -130,3 +134,15 @@ class LBSClientTestCase(unittest.TestCase):
             self.assertIsInstance(result, dict)
             self.assertIn('point', result['content'])
             self.assertTrue(float(result['content']['point']['x']) <= 180)
+
+    def test_geoconv_convert_coords(self):
+        test_data = ("114.21892734521,29.575429778924;"
+                     "114.21892734521,29.575429778924")
+        test_data_list = test_data.split(';')
+        with HTTMock(baidu_api_mock):
+            result = self.lbs_client.geoconv.convert_coords(test_data)
+            self.assertIn('result', result)
+            self.assertEqual(len(result['result']), 2)
+            result = self.lbs_client.geoconv.convert_coords(test_data_list)
+            self.assertIn('result', result)
+            self.assertEqual(len(result['result']), 2)

@@ -19,6 +19,7 @@ from baidu.api.base import BaseAPI
 from baidu.api.map.lbscloud import GeoDataAPI
 from baidu.api.map.geosearch import GeoSearchAPI
 from baidu.api.iplocation import IPLocationAPI
+from baidu.api.geoconv import GeoConvAPI
 
 
 def _is_api_endpoint(obj):
@@ -129,3 +130,4 @@ class LBSClient(BaseClient):
     geodata = GeoDataAPI()
     geosearch = GeoSearchAPI()
     iplocation = IPLocationAPI()
+    geoconv = GeoConvAPI()
