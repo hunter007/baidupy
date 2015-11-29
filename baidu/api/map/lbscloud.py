@@ -201,17 +201,7 @@ class GeoDataAPI(BaseAPI):
         :param title: poi名称，可选
         :param address: 地址，可选
         :param tags: tags，可选
-
-
         """
-        optionals = ('title', 'address', 'tags', 'url')
-
-        for key in kwargs:
-            if key not in optionals:
-                kwargs.pop(key)
-            if kwargs[key] is empty:
-                kwargs.pop(key)
-
         data = {
             'geotable_id': geotable_id,
             'latitude': latitude,
@@ -253,7 +243,7 @@ class GeoDataAPI(BaseAPI):
         params = {'geotable_id': geotable_id, 'id': poi_id}
         return self.get('/poi/detail', params=params)
 
-    def update_poi(self, geotable_id, poi_id, coord_type, **kwargs):
+    def update_poi(self, geotable_id, poi_id, coord_type=3, **kwargs):
         """
         修改数据（poi）接口
 
@@ -262,7 +252,11 @@ class GeoDataAPI(BaseAPI):
         :param coord_type: 用户上传的坐标的类型
         """
 
-        data = {'geotable_id': geotable_id, 'id': poi_id}
+        data = {
+            'geotable_id': geotable_id,
+            'id': poi_id,
+            'coord_type': coord_type
+        }
         data.update(kwargs)
         result = self.post('/poi/update', data=data)
         return result['id'] == poi_id
