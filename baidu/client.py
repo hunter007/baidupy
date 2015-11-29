@@ -28,7 +28,6 @@ class BaseClient(object):
 
     safe_chars = "/:=&?#+!$,;'@()*[]"
     api_host = ''
-    version = ''
 
     def __new__(cls, *args, **kwargs):
         self = super(BaseClient, cls).__new__(cls)
@@ -125,7 +124,6 @@ class BaseClient(object):
 
 class LBSClient(BaseClient):
     api_host = 'http://api.map.baidu.com'
-    version = 'v3'
 
     geodata = GeoDataAPI()
     geosearch = GeoSearchAPI()

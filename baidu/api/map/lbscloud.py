@@ -10,6 +10,7 @@ class GeoDataAPI(BaseAPI):
     """
     """
     scope = 'geodata'
+    version = 'v3'
 
     def create_geotable(self, name, is_published, geotype=1):
         """

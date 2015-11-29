@@ -5,6 +5,7 @@ from baidu.api.base import BaseAPI
 
 class GeoSearchAPI(BaseAPI):
     scope = 'geosearch'
+    version = 'v3'
 
     def search_nearby(self, geotable_id, location, q='', coord_type=3,
                       radius=1000, tags=None, sortby='', filter='',
@@ -140,6 +141,4 @@ class GeoSearchAPI(BaseAPI):
         }
 
         result = self.get(url, params=params)
-        print('='*80)
-        print(result)
         return result['contents'][0]

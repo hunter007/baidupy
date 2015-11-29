@@ -7,6 +7,7 @@ class BaseAPI(object):
     百度 API 基类
     """
     scope = ''
+    version = ''
 
     def __init__(self, client=None):
         self.__client = client
@@ -16,7 +17,7 @@ class BaseAPI(object):
         return '{api_host}/{scope}/{version}'.format(
             api_host=self.__client.api_host,
             scope=self.scope,
-            version=self.__client.version
+            version=self.version
         )
 
     def post(self, url, **kwargs):
