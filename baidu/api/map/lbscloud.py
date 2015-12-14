@@ -294,8 +294,8 @@ class GeoDataAPI(BaseAPI):
         # 如果是批量删除，则需要传这个参数，值为1；如果不是批量删除，则不用传这个参数
         if is_total_del == 1:
             data['is_total_del'] = 1
-        result = self.post('/poi/delete', data=data)
-        return result['id'] == poi_id
+        self.post('/poi/delete', data=data)
+        return True
 
     # def upload_poi(self,):
     #     """
